@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>二次方程求解器</title>
+    <style>
+        body { font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #f0f2f5; }
+        .card { background: white; border-radius: 2rem; padding: 2rem; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; }
+        button { background: #1e3a8a; color: white; border: none; padding: 12px 24px; border-radius: 40px; font-size: 1rem; cursor: pointer; width: 100%; margin-top: 1rem; }
+        button:active { transform: scale(0.98); }
+        .footer { font-size: 0.75rem; color: #5c6f87; margin-top: 1.5rem; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h2>📐 二次方程求解器</h2>
+    <p>ax² + bx + c = 0 &nbsp; (假设 a>0, Δ≥0)</p>
+    <button id="solveBtn">开始求解 (三次弹窗输入系数)</button>
+    <div class="footer">结果通过 alert 显示 | 打开控制台 (F12) 查看 console.log 输出</div>
+</div>
+
+<script>
+    function solveQuadraticAndAlert(a, b, c) {
+        let delta = b * b - 4 * a * c;
+        // 基本假设检查（为了测试发现问题，若违反则提示）
+        if (a <= 0) {
+            alert(`错误：a 必须大于 0 (当前 a = ${a})`);
+            console.error(`a <= 0: ${a}`);
+            return false;
+        }
+        if (delta < 0) {
+            alert(`错误：判别式 Δ = ${delta} < 0，无实数根 (题目假设 Δ≥0)`);
+            console.error(`Δ < 0: ${delta}`);
+            return false;
+        }
+        let sqrtDelta = Math.sqrt(delta);
+        let x1 = (-b + sqrtDelta) / (2 * a);
+        let x2 = (-b - sqrtDelta) / (2 * a);
+        // 格式化显示
+        let format = (v) => Math.abs(v) < 1e-12 ? "0" : parseFloat(v.toFixed(8)).toString();
+        let x1d = format(x1), x2d = format(x2);
+        alert(`方程 ${a}x² + ${b}x + ${c} = 0 的根：\nx₁ = ${x1d}\nx₂ = ${x2d}`);
+        console.log(`===== 求解结果 =====\na=${a}, b=${b}, c=${c}\nΔ=${delta}\nx1=${x1}, x2=${x2}\n格式化: x1=${x1d}, x2=${x2d}`);
+        return true;
+    }
+
+    function getCoefficient(paramName) {
+        let raw = prompt(`请输入系数 ${paramName}`, "");
+        if (raw === null) {
+            alert("输入已取消");
+            return null;
+        }
+        raw = raw.trim();
+        if (raw === "") {
+            alert("系数不能为空");
+            return null;
+        }
+        let num = parseFloat(raw);
+        if (isNaN(num)) {
+            alert(`"${raw}" 不是有效数字`);
+            return null;
+        }
+        return num;
+    }
+
+    function run() {
+        let a = getCoefficient("a (二次项系数，要求 a>0)");
+        if (a === null) return;
+        let b = getCoefficient("b");
+        if (b === null) return;
+        let c = getCoefficient("c");
+        if (c === null) return;
+        solveQuadraticAndAlert(a, b, c);
+    }
+
+    document.getElementById("solveBtn").addEventListener("click", run);
+    console.log("求解器已就绪，点击按钮开始");
+</script>
+</body>
+</html>
